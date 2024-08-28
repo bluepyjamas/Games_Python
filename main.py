@@ -1,37 +1,44 @@
-from turtle import Turtle, Screen
-import random
+from turtle import Screen
+import time
+from snake import Snake
+from food import Food
+from scoreboard import Scoreboard
 
-is_race_on = False
 screen = Screen()
-screen.setup(width=500, height=400)
-user_bet = screen.textinput(title="make a bet", prompt="Which turtle will win the race? Enter a color: ")
-colors = ["red", "orange", "black", "green", "blue", "purple"]
-y_positions = [-70, -40, -10, 20, 50, 80]
-all_turtles = []
+screen.setup(width=600, height=600)
+screen.bgcolor("black")
+screen.title("My Snake Game")
 
-for turtle_index in range(0, 6):
-    new_turtle = Turtle(shape="turtle")
-    new_turtle.color(colors[turtle_index])
-    new_turtle.penup()
-    new_turtle.goto(x=-230, y=y_positions[turtle_index])
-    all_turtles.append(new_turtle)
+scoreboard = Scoreboard()
+snake = Snake()
+food = Food()
 
-if user_bet:
-    is_race_on = True
+screen.listen()
+screen.onkey(snake.up, "Up")
+screen.onkey(snake.down, "Down")
+screen.onkey(snake.left, "Left")
+screen.onkey(snake.right, "Right")
 
-while is_race_on:
+game_is_on = True
+while game_is_on:
+    screen.update()
+    time.sleep(0)
+    snake.move()
 
-    for turtle in all_turtles:
-        if turtle.xcor() > 230:
-            is_race_on = False
-            winning_color = turtle.pencolor()
-            if winning_color == user_bet:
-                print(f"You've won! the {winning_color} turtle is the winner!")
-            else:
-                print(f"You've lost! the {winning_color} turtle is the winner!")
+    if snake.head.distance(food) < 15:
+        food.refresh()
+        snake.extend()
+        scoreboard.increase_score()
+        
+    if snake.head.xcor() > 280 or snake.head.xcor() < -280 or snake.head.ycor() > 280 or snake.head.ycor() < -280:
+        game_is_on = False
+        scoreboard.game_over()
 
-        rand_distance = random.randint(0, 10)
-        turtle.forward(rand_distance)
-
-
+    for segment in snake.segments:
+        if segment == snake.head:
+            pass
+        elif snake.head.distance(segment) < 10:
+            game_is_in = False
+            scoreboard.game_over()
+        
 screen.exitonclick()
