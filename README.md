@@ -1,4 +1,4 @@
 # Games_Python
-Games Made for Python
+Games Made in Python
 
 #Enjoy! :)
